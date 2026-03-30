@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANIVAKVET — Educación Veterinaria Continua</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1A1A3E;
+      --navy-light: #252550;
+      --orange: #FF8C00;
+      --lime: #7ED321;
+      --green: #00C853;
+      --cyan: #00B8D4;
+      --blue: #1565C0;
+      --magenta: #E91E8C;
+      --white: #F5F5F5;
+      --muted: rgba(245,245,245,0.55);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── GRADIENT ORBS ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--cyan); top: -200px; right: -200px; }
+    .orb-2 { width: 400px; height: 400px; background: var(--magenta); bottom: 10%; left: -150px; }
+    .orb-3 { width: 300px; height: 300px; background: var(--orange); top: 40%; right: 10%; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(26,26,62,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--orange), var(--lime), var(--cyan), var(--magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: var(--white) !important;
+      padding: 0.6rem 1.4rem;
+      border-radius: 100px;
+      font-weight: 500 !important;
+      transition: opacity 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.85; color: var(--white) !important; }
+
+    /* ── HERO ── */
+    header {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--lime) 30%, var(--cyan) 60%, var(--magenta) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.45s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--orange), var(--magenta));
+      color: white;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(233,30,140,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(233,30,140,0.35); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* ── STATS ── */
+    .stats {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      max-width: 800px;
+      margin: 4rem auto;
+      background: rgba(255,255,255,0.06);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+
+    .stat {
+      background: rgba(26,26,62,0.9);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.5rem;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--cyan), var(--lime));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── SECTION ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 540px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── CURSOS GRID ── */
+    .cursos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .curso-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.8rem;
+      transition: transform 0.25s, background 0.25s, border-color 0.25s;
+      cursor: default;
+    }
+
+    .curso-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .curso-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .curso-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .curso-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .curso-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── PARA QUIÉN ── */
+    .para-quien-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .feature-list li strong { color: var(--white); }
+
+    .check {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+
+    .visual-block {
+      background: linear-gradient(135deg, rgba(0,184,212,0.1), rgba(0,200,83,0.05));
+      border: 1px solid rgba(0,184,212,0.2);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .big-emoji { font-size: 5rem; line-height: 1; margin-bottom: 1.5rem; display: block; }
+
+    .visual-block p {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      line-height: 1.3;
+    }
+
+    .visual-block span { color: var(--cyan); }
+
+    /* ── CONTACTO ── */
+    .contacto-box {
+      background: linear-gradient(135deg, rgba(255,140,0,0.08), rgba(233,30,140,0.08));
+      border: 1px solid rgba(255,140,0,0.2);
+      border-radius: 24px;
+      padding: 4rem;
+      text-align: center;
+    }
+
+    .contact-items {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      text-decoration: none;
+      color: var(--white);
+      transition: background 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .contact-item:hover { background: rgba(255,255,255,0.1); }
+    .contact-item-icon { font-size: 1.3rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .stats { grid-template-columns: 1fr; }
+      .para-quien-grid { grid-template-columns: 1fr; }
+      .contacto-box { padding: 2.5rem 1.5rem; }
+      section { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Orbs decorativos -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">ANIVAKVET</div>
+    <ul class="nav-links">
+      <li><a href="#cursos">Cursos</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#contacto" class="nav-cta">Inscríbete</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Educación Veterinaria Continua · México
+    </div>
+
+    <h1>Actualiza tu práctica.<br /><span>Eleva tu nivel.</span></h1>
+
+    <p class="hero-sub">
+      Formación de alto impacto para médicos veterinarios que quieren mantenerse a la vanguardia clínica. Cursos online y presenciales con expertos nacionales.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#cursos" class="btn-primary">
+        Ver cursos disponibles →
+      </a>
+      <a href="https://wa.me/522713560541" target="_blank" class="btn-secondary">
+        💬 Contactar por WhatsApp
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">1,000+</div>
+        <div class="stat-label">Veterinarios en la red</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6+</div>
+        <div class="stat-label">Especialidades activas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Enfoque práctico-clínico</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- CURSOS -->
+  <section id="cursos">
+    <div class="section-label">Oferta académica</div>
+    <h2>Cursos y diplomados<br />disponibles</h2>
+    <p class="section-sub">Programas diseñados por especialistas, orientados a la práctica clínica real en pequeñas especies, fauna silvestre y medicina bovina.</p>
+
+    <div class="cursos-grid">
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#FF8C00,#E91E8C22);">🔪</div>
+        <div class="curso-title">Cirugía de Tejidos Blandos</div>
+        <div class="curso-desc">Técnicas quirúrgicas actualizadas para pequeñas especies. Abordajes, suturas y manejo perioperatorio.</div>
+        <span class="curso-tag">Pequeñas especies</span>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#00B8D4,#1565C022);">🔬</div>
+        <div class="curso-title">Dermatología Veterinaria</div>
+        <div class="curso-desc">Diagnóstico y tratamiento de enfermedades dermatológicas. Citología, alergias y casos clínicos complejos.</div>
+        <span class="curso-tag">Clínica avanzada</span>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#E91E8C,#1565C022);">❤️</div>
+        <div class="curso-title">Cardiología Veterinaria</div>
+        <div class="curso-desc">Electrocardiografía, ecocardiografía básica y manejo de cardiopatías en perros y gatos.</div>
+        <span class="curso-tag">Diagnóstico por imagen</span>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#7ED321,#00C85322);">🦎</div>
+        <div class="curso-title">Medicina de Especies Exóticas</div>
+        <div class="curso-desc">Atención clínica de reptiles, aves y pequeños mamíferos. Manejo, anestesia y patologías frecuentes.</div>
+        <span class="curso-tag">Fauna silvestre</span>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#00C853,#00B8D422);">🔊</div>
+        <div class="curso-title">Ultrasonografía Veterinaria</div>
+        <div class="curso-desc">Fundamentos y práctica de ultrasonido abdominal, reproductivo y de urgencias en pequeñas especies.</div>
+        <span class="curso-tag">Imagen diagnóstica</span>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-icon" style="background: linear-gradient(135deg,#1565C0,#7ED32122);">🐄</div>
+        <div class="curso-title">Genética Bovina</div>
+        <div class="curso-desc">Mejoramiento genético, biotecnología reproductiva y selección de sementales para el corredor Veracruz-Tabasco-Chiapas.</div>
+        <span class="curso-tag">Medicina bovina</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- NOSOTROS -->
+  <section id="nosotros">
+    <div class="para-quien-grid">
+      <div>
+        <div class="section-label">¿Para quién es ANIVAKVET?</div>
+        <h2>Hecho por veterinarios,<br />para veterinarios</h2>
+        <p class="section-sub">Nos especializamos en educación continua de alto nivel para profesionales de la medicina veterinaria en México.</p>
+
+        <ul class="feature-list">
+          <li>
+            <span class="check">✓</span>
+            <div><strong>Médicos veterinarios en ejercicio</strong> que buscan actualizar sus conocimientos clínicos sin detener su práctica.</div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div><strong>Recién egresados</strong> que quieren especializarse en áreas de alta demanda y diferenciarse en el mercado.</div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div><strong>Clínicas y hospitales veterinarios</strong> que buscan capacitar a su equipo con programas estructurados.</div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div><strong>Profesionales del sureste mexicano</strong> — Veracruz, Tabasco, Chiapas y toda la región.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="visual-block">
+        <span class="big-emoji">🐾</span>
+        <p>Educación veterinaria que <span>transforma</span> tu práctica clínica</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACTO -->
+  <section id="contacto">
+    <div class="contacto-box">
+      <div class="section-label">Contacto</div>
+      <h2>¿Listo para inscribirte?</h2>
+      <p class="section-sub" style="margin: 1rem auto 0; max-width: 460px;">
+        Escríbenos por WhatsApp o correo y te orientamos sobre el programa ideal para tu perfil profesional.
+      </p>
+
+      <div class="contact-items">
+        <a href="https://wa.me/522713560541" target="_blank" class="contact-item">
+          <span class="contact-item-icon">💬</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">WhatsApp</div>
+            <div>271 356 0541</div>
+          </div>
+        </a>
+
+        <a href="mailto:cursos@anivakvet.pro" class="contact-item">
+          <span class="contact-item-icon">✉️</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Correo electrónico</div>
+            <div>cursos@anivakvet.pro</div>
+          </div>
+        </a>
+
+        <div class="contact-item">
+          <span class="contact-item-icon">📍</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:2px;">Ubicación</div>
+            <div>Xalapa, Veracruz · México</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 ANIVAKVET · Educación Veterinaria Continua · Xalapa, Veracruz, México</p>
+    <p style="margin-top:0.4rem;">cursos@anivakvet.pro · 271 356 0541</p>
+  </footer>
+
+</body>
+</html>
